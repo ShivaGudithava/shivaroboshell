@@ -1,5 +1,5 @@
 echo "\e[36m>>>>>>>>>>> Create Catalogue Service <<<<<<<<<<<<\e[0m"
-cp catalogue.service /etc/systemd/system/catalogue.service &&>/tmp/roboshop.log
+cp catalogue.service /etc/systemd/system/catalogue.service &>/tmp/roboshop.log
 
 echo "\e[36m>>>>>>>>>>> Create MongoDB Repo <<<<<<<<<<<<\e[0m"
 cp mongo.repo /etc/yum.repos.d/mongo.repo &>/tmp/roboshop.log
