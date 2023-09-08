@@ -112,10 +112,16 @@ func_systemd
 func_python() {
 echo -e "\e[36m>>>>>>>>>>> Build ${component} Services <<<<<<<<<<<<\e[0m"
   yum install python36 gcc python3-devel -y &>>/tmp/roboshop.log
+ func_exit_status
 
-  func_systemd
+ func_appreq
+
+ sed -i "s/rabbitmq_app_password/${rabbitmq_app_password}/" /etc/systemd/system/${component}.service
+
   echo -e "\e[36m>>>>>>>>>>> Build ${component} Services <<<<<<<<<<<<\e[0m"
   pip3.6 install -r requirements.txt &>>/tmp/roboshop.log
+  func_exit_status
+
 
   func_systemd
 }
