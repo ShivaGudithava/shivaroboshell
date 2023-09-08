@@ -1,3 +1,10 @@
+component=shipping
+source common.sh
+
+func_java
+
+
+
 cp shipping.service /etc/systemd/system/shipping.service
 
 yum install maven -y

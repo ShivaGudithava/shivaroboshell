@@ -1,4 +1,28 @@
-nodejs() {
+func_appreq() {
+  echo -e "\e[36m>>>>>>>>>>> Create Application user  <<<<<<<<<<<<\e[0m"
+  add roboshop&>>/tmp/roboshop.log
+
+  echo -e "\e[36m>>>>>>>>>>> Cleanup Existing Application content <<<<<<<<<<<<\e[0m"
+  rm -rf /app&>>/tmp/roboshop.log
+
+  echo -e "\e[36m>>>>>>>>>>> Create Application Directory <<<<<<<<<<<<\e[0m"
+  mkdir /app&>>/tmp/roboshop.log
+
+  echo -e "\e[36m>>>>>>>>>>> Download Application Content <<<<<<<<<<<<\e[0m"
+  curl -o /tmp/${component}.zip https://roboshop-artifacts.s3.amazonaws.com/${component}.zip&>>/tmp/roboshop.log
+
+  echo -e "\e[36m>>>>>>>>>>> Extract Application Content  <<<<<<<<<<<<\e[0m"
+  cd /app
+  unzip /tmp/${component}.zip&>>/tmp/roboshop.log
+  cd /app
+}
+ func_systemd() {
+   echo -e "\e[36m>>>>>>>>>>> Start ${component} Services <<<<<<<<<<<<\e[0m"
+   systemctl daemon-reload&>>/tmp/roboshop.log
+   systemctl enable ${component}&>>/tmp/roboshop.log
+   systemctl restart ${component}&>>/tmp/roboshop.log
+ }
+func_nodejs() {
   log=/tmp/roboshop.log
 
 echo -e "\e[36m>>>>>>>>>>> Create ${component} Service <<<<<<<<<<<<\e[0m"
@@ -13,22 +37,7 @@ curl -sL https://rpm.nodesource.com/setup_lts.x | bash&>>/tmp/roboshop.log
 echo -e "\e[36m>>>>>>>>>>> Install NodeJS <<<<<<<<<<<<\e[0m"
 yum install nodejs -y&>>/tmp/roboshop.log
 
-echo -e "\e[36m>>>>>>>>>>> Create Application  <<<<<<<<<<<<\e[0m"
-add roboshop&>>/tmp/roboshop.log
-
-echo -e "\e[36m>>>>>>>>>>> Create Application Directory <<<<<<<<<<<<\e[0m"
-rm -rf /app&>>/tmp/roboshop.log
-
-echo -e "\e[36m>>>>>>>>>>> Create Application Directory <<<<<<<<<<<<\e[0m"
-mkdir /app&>>/tmp/roboshop.log
-
-echo -e "\e[36m>>>>>>>>>>> Download Application Content <<<<<<<<<<<<\e[0m"
-curl -o /tmp/${component}.zip https://roboshop-artifacts.s3.amazonaws.com/${component}.zip&>>/tmp/roboshop.log
-
-echo -e "\e[36m>>>>>>>>>>> Extract Application Content  <<<<<<<<<<<<\e[0m"
-cd /app
-unzip /tmp/${component}.zip&>>/tmp/roboshop.log
-cd /app
+func_appreq
 
 echo -e "\e[36m>>>>>>>>>>> Download NodeJS Dependencies <<<<<<<<<<<<\e[0m"
 npm install&>>/tmp/roboshop.log
@@ -39,8 +48,27 @@ yum install mongodb-org-shell -y&>>/tmp/roboshop.log
 echo -e "\e[36m>>>>>>>>>>> Load user Schema <<<<<<<<<<<<\e[0m"
 mongo --host mongodb.gudishivadevops.online </app/schema/${component}.js&>>/tmp/roboshop.log
 
-echo -e "\e[36m>>>>>>>>>>> Start user Services <<<<<<<<<<<<\e[0m"
-systemctl daemon-reload&>>/tmp/roboshop.log
-systemctl enable ${component}&>>/tmp/roboshop.log
-systemctl restart ${component}&>>/tmp/roboshop.log
+func_systemd
+}
+
+func_java() {
+echo -e "\e[36m>>>>>>>>>>> Create ${component} Services <<<<<<<<<<<<\e[0m"
+cp ${component}.service /etc/systemd/system/${component}.service
+
+echo -e "\e[36m>>>>>>>>>>> Install Maven <<<<<<<<<<<<\e[0m"
+yum install maven -y
+
+func_appreq
+
+echo -e "\e[36m>>>>>>>>>>> Build ${component} Services <<<<<<<<<<<<\e[0m"
+mvn clean package
+mv target/${component}-1.0.jar ${component}.jar
+
+echo -e "\e[36m>>>>>>>>>>> Install MySQL Client <<<<<<<<<<<<\e[0m"
+yum install mysql -y
+
+echo -e "\e[36m>>>>>>>>>>> Load Schema <<<<<<<<<<<<\e[0m"
+mysql -h mysql.gudishivadevops.online -uroot -pRoboShop@1 < /app/schema/${component}.sql
+
+func_systemd
 }
