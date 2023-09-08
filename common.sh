@@ -37,7 +37,7 @@ func_exit_status
   cd /app
   unzip /tmp/${component}.zip&>>/tmp/roboshop.log
   cd /app
-func_exit_status
+ func_exit_status
 }
  func_systemd() {
    echo -e "\e[36m>>>>>>>>>>> Start ${component} Services <<<<<<<<<<<<\e[0m"
