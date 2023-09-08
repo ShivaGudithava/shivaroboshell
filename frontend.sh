@@ -4,7 +4,6 @@ echo -e "\e[36m>>>>>>>>>>> Install Nginx <<<<<<<<<<<<\e[0m"
  yum install nginx -y &>>${log}
  func_exit_status
 
-
  echo -e "\e[36m>>>>>>>>>>> Copy Roboshop Configuration <<<<<<<<<<<<\e[0m"
  cp nginx-roboshop.conf /etc/nginx/default.d/roboshop.conf &>>${log}
   func_exit_status
