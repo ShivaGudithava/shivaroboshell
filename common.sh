@@ -25,6 +25,23 @@ func_appreq() {
    systemctl enable ${component}&>>/tmp/roboshop.log
    systemctl restart ${component}&>>/tmp/roboshop.log
  }
+ func_schema_setup() {
+   if ["${schema_type}" == "mongodb" ]; then
+   echo -e "\e[36m>>>>>>>>>>> Insatll Mongo Client <<<<<<<<<<<<\e[0m"
+   yum install mongodb-org-shell -y&>>/tmp/roboshop.log
+
+   echo -e "\e[36m>>>>>>>>>>> Load user Schema <<<<<<<<<<<<\e[0m"
+   mongo --host mongodb.gudishivadevops.online </app/schema/${component}.js&>>/tmp/roboshop.log
+ fi
+
+ if [ "${schema_type}" == "mysql" ]; then
+   echo -e "\e[36m>>>>>>>>>>> Install MySQL Client <<<<<<<<<<<<\e[0m"
+   yum install mysql -y &>>/tmp/roboshop.log
+
+   echo -e "\e[36m>>>>>>>>>>> Load Schema <<<<<<<<<<<<\e[0m"
+   mysql -h mysql.gudishivadevops.online -uroot -pRoboShop@1 < /app/schema/${component}.sql &>>/tmp/roboshop.log
+   fi
+    }
 func_nodejs() {
   log=/tmp/roboshop.log
 
@@ -43,11 +60,7 @@ func_appreq
 echo -e "\e[36m>>>>>>>>>>> Download NodeJS Dependencies <<<<<<<<<<<<\e[0m"
 npm install&>>/tmp/roboshop.log
 
-echo -e "\e[36m>>>>>>>>>>> Insatll Mongo Client <<<<<<<<<<<<\e[0m"
-yum install mongodb-org-shell -y&>>/tmp/roboshop.log
-
-echo -e "\e[36m>>>>>>>>>>> Load user Schema <<<<<<<<<<<<\e[0m"
-mongo --host mongodb.gudishivadevops.online </app/schema/${component}.js&>>/tmp/roboshop.log
+func_schema_setup
 
 func_systemd
 }
@@ -63,11 +76,7 @@ echo -e "\e[36m>>>>>>>>>>> Build ${component} Services <<<<<<<<<<<<\e[0m"
 mvn clean package &>>/tmp/roboshop.log
 mv target/${component}-1.0.jar ${component}.jar &>>/tmp/roboshop.log
 
-echo -e "\e[36m>>>>>>>>>>> Install MySQL Client <<<<<<<<<<<<\e[0m"
-yum install mysql -y &>>/tmp/roboshop.log
-
-echo -e "\e[36m>>>>>>>>>>> Load Schema <<<<<<<<<<<<\e[0m"
-mysql -h mysql.gudishivadevops.online -uroot -pRoboShop@1 < /app/schema/${component}.sql &>>/tmp/roboshop.log
+func_schema_setup
 
 func_systemd
 }
