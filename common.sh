@@ -53,22 +53,22 @@ func_systemd
 
 func_java() {
 echo -e "\e[36m>>>>>>>>>>> Create ${component} Services <<<<<<<<<<<<\e[0m"
-cp ${component}.service /etc/systemd/system/${component}.service
+cp ${component}.service /etc/systemd/system/${component}.service &>>/tmp/roboshop.log
 
 echo -e "\e[36m>>>>>>>>>>> Install Maven <<<<<<<<<<<<\e[0m"
-yum install maven -y
+yum install maven -y &>>/tmp/roboshop.log
 
 func_appreq
 
 echo -e "\e[36m>>>>>>>>>>> Build ${component} Services <<<<<<<<<<<<\e[0m"
-mvn clean package
-mv target/${component}-1.0.jar ${component}.jar
+mvn clean package &>>/tmp/roboshop.log
+mv target/${component}-1.0.jar ${component}.jar &>>/tmp/roboshop.log
 
 echo -e "\e[36m>>>>>>>>>>> Install MySQL Client <<<<<<<<<<<<\e[0m"
-yum install mysql -y
+yum install mysql -y &>>/tmp/roboshop.log
 
 echo -e "\e[36m>>>>>>>>>>> Load Schema <<<<<<<<<<<<\e[0m"
-mysql -h mysql.gudishivadevops.online -uroot -pRoboShop@1 < /app/schema/${component}.sql
+mysql -h mysql.gudishivadevops.online -uroot -pRoboShop@1 < /app/schema/${component}.sql &>>/tmp/roboshop.log
 
 func_systemd
 }
