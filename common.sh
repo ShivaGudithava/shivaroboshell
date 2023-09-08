@@ -15,7 +15,10 @@ func_appreq() {
 
 
   echo -e "\e[36m>>>>>>>>>>> Create Application user  <<<<<<<<<<<<\e[0m"
-  add roboshop&>>/tmp/roboshop.log
+  id roboshop &>>${log}
+  if [$? -ne 0 ]; then
+  useradd roboshop&>>/tmp/roboshop.log
+  fi
 func_exit_status
 
   echo -e "\e[36m>>>>>>>>>>> Cleanup Existing Application content <<<<<<<<<<<<\e[0m"
