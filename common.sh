@@ -26,6 +26,7 @@ func_appreq() {
    systemctl restart ${component}&>>/tmp/roboshop.log
  }
  func_schema_setup() {
+
    if ["${schema_type}" == "mongodb" ]; then
    echo -e "\e[36m>>>>>>>>>>> Insatll Mongo Client <<<<<<<<<<<<\e[0m"
    yum install mongodb-org-shell -y&>>/tmp/roboshop.log
