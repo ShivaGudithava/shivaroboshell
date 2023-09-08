@@ -1,8 +1,10 @@
+log=/tmp/roboshop.log
+
 func_ exit_status() {
   if [ $? -eq 0 ]; then
     echo -e "\e[32m SUCCESS \e[0m"
     else
-      echo -e "\e[31m FALIURE \e[0m"
+    echo -e "\e[31m FAILURE \e[0m"
       fi
 }
 func_appreq() {
@@ -10,6 +12,7 @@ func_appreq() {
   echo -e "\e[36m>>>>>>>>>>> Create ${component} Services <<<<<<<<<<<<\e[0m"
   cp ${component}.service /etc/systemd/system/${component}.service &>>/tmp/roboshop.log
   func_exit_status
+
 
   echo -e "\e[36m>>>>>>>>>>> Create Application user  <<<<<<<<<<<<\e[0m"
   add roboshop&>>/tmp/roboshop.log
