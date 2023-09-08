@@ -16,7 +16,7 @@ func_appreq() {
 
   echo -e "\e[36m>>>>>>>>>>> Create Application user  <<<<<<<<<<<<\e[0m"
   id roboshop &>>${log}
-  if [$? -ne 0 ]; then
+  if [ $? -ne 0 ]; then
   useradd roboshop&>>/tmp/roboshop.log
   fi
 func_exit_status
