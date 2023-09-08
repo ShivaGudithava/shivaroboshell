@@ -47,7 +47,6 @@ func_appreq() {
 func_nodejs() {
   log=/tmp/roboshop.log
 
-
 echo -e "\e[36m>>>>>>>>>>> Create MongoDB Repo <<<<<<<<<<<<\e[0m"
 cp mongo.repo /etc/yum.repos.d/mongo.repo&>>/tmp/roboshop.log
 
